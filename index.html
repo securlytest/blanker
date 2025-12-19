@@ -1,34 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Optional styling to make it look cleaner */
+        body { font-family: sans-serif; padding: 20px; }
+        input { padding: 8px; width: 250px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <button>embed about:blank</button>
+
+    <input type="text" id="urlInput" placeholder="Enter URL (e.g., https://bing.com)">
+    
+    <button id="embedBtn">Embed in about:blank</button>
+
     <script type="text/javascript">
-        var urlobj = new window.URL(window.location.href);
-        let url = prompt("url?")
-        if (url) {
-            var win;
-            document.querySelector('button'). onclick = function() {
-            if (win) {
-            win.focus();
-        }
-        else {
-            win = window.open();
-            win.document.body.style.margin = '0';
-            win. document.body.style.height = '100%';
-            var iframe = win.document.createElement('iframe');
-            iframe.style.border='none';
-            iframe.style.width = '100%' ;
-            iframe.style.height = '100%' ;
-            iframe.style.margin = '0';
-            iframe.src = url;
-            win.document.body.appendChild(iframe);
+        var win;
+
+        document.getElementById('embedBtn').onclick = function() {
+            // Get the value from the text box
+            let url = document.getElementById('urlInput').value;
+
+            // Simple check to ensure URL isn't empty
+            if (!url) {
+                alert("Please enter a URL first.");
+                return;
             }
-            location.reload();
+
+            // Ensure the URL has a protocol (http/https)
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
             }
-        }
+
+            if (win && !win.closed) {
+                win.focus();
+            } else {
+                win = window.open();
+                if (!win) {
+                    alert("Pop-up blocked! Please allow pop-ups for this site.");
+                    return;
+                }
+
+                // Set up the new window document
+                win.document.body.style.margin = '0';
+                win.document.body.style.height = '100vh';
+                win.document.body.style.overflow = 'hidden';
+
+                var iframe = win.document.createElement('iframe');
+                iframe.style.border = 'none';
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.margin = '0';
+                iframe.src = url;
+
+                win.document.body.appendChild(iframe);
+            }
+        };
     </script>
 </body>
 </html>
